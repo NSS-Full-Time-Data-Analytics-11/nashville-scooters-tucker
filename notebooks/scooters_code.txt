@@ -1,0 +1,30 @@
+--- selecting out one month and one company
+query = '''
+SELECT EXTRACT(MONTH from DATE(pubdatetime)) AS month, pubdatetime, companyname, sumdid, latitude, longitude, chargelevel, costpermin
+FROM scooters
+WHERE EXTRACT(MONTH from DATE(pubdatetime)) = 5 AND sumdgroup <> 'bicycle' AND companyname = 'Bolt';
+'''
+
+with engine.connect() as connection: result = connection.execute(text(query))
+
+with engine.connect() as connection:    
+    bolt_may_scooters = pd.read_sql(text(query), con = connection)
+
+bolt_may_scooters.head()
+
+
+---adding the geometry column
+bolt_may_scooters['geometry'] = bolt_may_scooters.apply(lambda x: Point((float(x.longitude), 
+                                                         float(x.latitude))), 
+                                        axis=1)
+bolt_may_scooters.head(3)
+
+
+---changing to a geodf
+bolt_may_geo = gpd.GeoDataFrame(bolt_may_scooters, 
+                           crs = zipcodes.crs, 
+                           geometry = bolt_may_scooters['geometry'])
+
+
+---merge this with the zipcodes
+may_bolt_zip = gpd.sjoin(bolt_may_geo, zipcodes, op = 'within')

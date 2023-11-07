@@ -119,22 +119,56 @@ SELECT DATE(pubdatetime), latitude, longitude, sumdid, companyname
 FROM scooters
 WHERE sumdgroup <> 'bicycle' AND DATE(pubdatetime) = '2019-05-01';
 
-
+--Data from trips table for just one date
 SELECT DATE(pubtimestamp), companyname, sumdid, triprecordnum, tripduration, tripdistance
 FROM trips
 WHERE DATE(pubtimestamp) = '2019-05-01';
 
+--Data narrowed down by month
 SELECT EXTRACT(MONTH from DATE(pubtimestamp)) AS month, pubtimestamp, companyname, sumdid, triprecordnum, tripduration, tripdistance
 FROM trips
 WHERE EXTRACT(MONTH from DATE(pubtimestamp)) = 5;
 
---scooters in may from lyft
+--Scooters in may from lyft
 SELECT EXTRACT(MONTH from DATE(pubdatetime)) AS month, pubdatetime, companyname, sumdid, latitude, longitude, chargelevel, costpermin
 FROM scooters
 WHERE EXTRACT(MONTH from DATE(pubdatetime)) = 5 AND sumdgroup <> 'bicycle' AND companyname = 'Lyft';
 
-
+--total number of trips per company
 SELECT COUNT(*), companyname
 FROM trips
 GROUP BY companyname
 ORDER BY COUNT(*) DESC;
+
+--number of individual Lyft scooters
+SELECT COUNT(DISTINCT sumdid), companyname
+FROM scooters
+WHERE companyname = 'Lyft'
+GROUP BY companyname;
+
+--number of scooters per company
+SELECT COUNT(DISTINCT sumdid) as scooters, companyname
+FROM trips
+GROUP BY companyname
+ORDER BY scooters DESC;
+
+SELECT COUNT(DISTINCT sumdid)
+FROM trips;
+
+--sumdids of all Lyft scooters w num of trips
+SELECT sumdid, COUNT(tripduration) AS trips
+FROM scooters
+INNER JOIN trips
+USING (sumdid)
+WHERE scooters.companyname = 'Lyft'
+GROUP BY sumdid
+ORDER BY trips;
+
+--sumdids of all Lime scooters and number of trips they made
+SELECT companyname AS company, sumdid AS scooter, COUNT(*) AS trips, SUM(tripduration) AS total_duration, SUM(tripdistance) AS total_distance
+FROM trips
+WHERE companyname = 'Lime'
+GROUP BY sumdid, companyname
+ORDER BY trips;
+
+
