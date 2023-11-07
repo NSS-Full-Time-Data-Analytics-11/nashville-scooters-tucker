@@ -1,0 +1,14 @@
+--Metro would like to know what the ideal density of available scooters is, 
+--which balances the objectives of enabling scooters to serve transportation goals,
+--discouraging scooters from piling up on sidewalks,
+--keeping it economically viable for companies to operate equitably in the city.
+
+
+
+
+
+SELECT 
+    to_char(starttime, 'HH12:MI:SS AM') AS starttime_12hr,
+    to_char(endtime, 'HH12:MI:SS AM') AS endtime_12hr
+FROM trips
+LIMIT 10
