@@ -128,9 +128,13 @@ SELECT EXTRACT(MONTH from DATE(pubtimestamp)) AS month, pubtimestamp, companynam
 FROM trips
 WHERE EXTRACT(MONTH from DATE(pubtimestamp)) = 5;
 
---scooters in may from pyft
+--scooters in may from lyft
 SELECT EXTRACT(MONTH from DATE(pubdatetime)) AS month, pubdatetime, companyname, sumdid, latitude, longitude, chargelevel, costpermin
 FROM scooters
 WHERE EXTRACT(MONTH from DATE(pubdatetime)) = 5 AND sumdgroup <> 'bicycle' AND companyname = 'Lyft';
 
 
+SELECT COUNT(*), companyname
+FROM trips
+GROUP BY companyname
+ORDER BY COUNT(*) DESC;
