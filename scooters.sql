@@ -171,4 +171,6 @@ WHERE companyname = 'Lime'
 GROUP BY sumdid, companyname
 ORDER BY trips;
 
-
+--only rows that I want
+SELECT pubtimestamp, companyname, triprecordnum, sumdid, tripduration, tripdistance, startdate, starttime, enddate, endtime, startlatitude, startlongitude, endlatitude, endlongitude
+FROM trips;
